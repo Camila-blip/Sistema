@@ -39,9 +39,10 @@ export const LabelAvatar = styled.label`
 export const FormProfile = styled.form`
     display: flex;
     flex-direction: column;
-    > label{
+    width: 100%;
+    label{
         margin-bottom: .5em;
-        font-size: 1.4em;
+        font-size: 1.1em;
     }
     
     > input, textarea, select{
@@ -54,7 +55,7 @@ export const FormProfile = styled.form`
     > input:disabled{
         cursor: not-allowed;
     }
-    > button{
+    button{
         max-width: 600px;
         height: 35px;
         border: 0;
@@ -62,6 +63,15 @@ export const FormProfile = styled.form`
         background-color: #181c2e;
         color: #fff;
         font-size: 1.3em;
+    }
+    textarea{
+        height: 95px;
+        resize: none;
+    }
+    input[type="radio"]{
+        &:not(:first-child){
+            margin-left: 15px;
+        }
     }
 `
 export const Logout = styled.button`
@@ -74,5 +84,3 @@ export const Logout = styled.button`
     justify-content: center;
     align-items: center;
 `
-
-
