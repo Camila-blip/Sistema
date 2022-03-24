@@ -18,6 +18,7 @@ export const Sidebar = styled.aside`
 `
 export const Content = styled.article`
     margin-left: 200px;
+    padding: 0 20px;
     @media(max-width: 700px) {
         margin-left: 0;
      } 
