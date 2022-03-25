@@ -45,7 +45,7 @@ export const FormProfile = styled.form`
         font-size: 1.1em;
     }
     
-    > input, textarea, select{
+    input, textarea, select{
         margin-bottom: 1em;
         padding: .7em;
         border: 0;
@@ -69,7 +69,8 @@ export const FormProfile = styled.form`
         resize: none;
     }
     input[type="radio"]{
-        &:not(:first-child){
+        margin-bottom: 0;
+        &:not(:first-child){ 
             margin-left: 15px;
         }
     }

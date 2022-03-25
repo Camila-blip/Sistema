@@ -1,21 +1,80 @@
 import { useState, useEffect, useContext } from "react";
 import Header from "../../components/Header";
 import Title from "../../components/Title";
+import firebase from "../../services/firebaseConnection";
 import { AuthContent } from "../../contexts/auth";
 import { Container, FormProfile } from '../../Estilizacao/profileStyle';
 import { Content } from '../../Estilizacao/headerStyle';
 import { Status, Div } from '../../Estilizacao/newStyle';
 import { FiPlus } from 'react-icons/fi';
+import { toast } from "react-toastify";
 
 export default function New(){
+    const [loadCustomers, setLoadCustomers] = useState(true);
+    const [customers, setCustomers] = useState([]);
+    const [customerSelected, setCustomerSelected] = useState(0);
+
     const [assunto, setAssunto] = useState('Suporte');
     const [status, setStatus] = useState('Aberto');
     const [complemento, setComplemento] = useState('');
 
-    const [user] = useContext(AuthContent);
+    const {user} = useContext(AuthContent);
     
-    function handleRegister(e){
+    useEffect(()=>{
+        async function loadCustomers(){
+            await firebase.firestore().collection('customers')
+            .get()
+            .then((snapshot)=>{
+                let lista = [];
+                snapshot.forEach(doc => {
+                    lista.push({
+                        id: doc.id,
+                        nomeFantasia: doc.data().nomeFantasia
+                    })
+                });
+                if(lista.length === 0){
+                    alert('nenhuma empresa encontrada');
+                    setCustomers([{id: '1', nomeFantasia: 'FREELA'}]);
+                    setLoadCustomers(false);
+                    return;
+                }
+                setCustomers(lista);
+                setLoadCustomers(false);
+            })
+            .catch((error)=>{
+                toast.error('Ops ocorreu um erro na chamada.')
+                setLoadCustomers(false);
+                setCustomers([{id: '1', nomeFantasia: ''}]);
+            })
+        }
+
+        loadCustomers();
+    },[]);
+
+
+    async function handleRegister(e){
         e.preventDefault();
+
+        await firebase.firestore().collection('chamados')
+        .add({
+            created: new Date(),
+            cliente: customers[customerSelected].nomeFantasia,
+            clienteId: customers[customerSelected].id,
+            assunto: assunto,
+            status: status,
+            complemento: complemento,
+            userId: user.uid
+        })
+        .then(()=>{
+            toast.success('Chamado criado com sucesso!');
+            setComplemento('');
+            setCustomerSelected(0);
+        })
+        .catch((error)=>{
+            toast.error('Ops erro ao registrar, tente mais tarde.');
+            console.log(error);
+        })
+
     }
 
     function handleChangeSelect(e){
@@ -24,6 +83,10 @@ export default function New(){
 
     function handleOptionChange(e){
         setStatus(e.target.value);
+    }
+
+    function handleChangeCustomers(e){
+        setCustomerSelected(e.target.value);
     }
 
     return(
@@ -37,9 +100,20 @@ export default function New(){
                     <FormProfile onSubmit={handleRegister}>
                         <Div>
                             <label>Cliente</label>
-                            <select>
-                                <option key={1} value={1}>Sujeito Programador</option>
-                            </select>
+                            {loadCustomers ? (
+                                <input type="text" disabled={true} value="Carregando clientes..." />
+                            ) : ( 
+                                <select value={customerSelected} onChange={handleChangeCustomers}>
+                                    {customers.map((item, index)=>{
+                                        return(
+                                            <option key={item.id} value={index}>
+                                                {item.nomeFantasia}
+                                            </option>
+                                        )
+                                    })}
+                                </select>
+                            )}
+                            
                         </Div>
                         
                         <Div>
