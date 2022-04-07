@@ -46,6 +46,16 @@ export const LinkNew = styled(Link)`
         margin-right: 5px;
     }
 `
+export const BtnMore = styled.button`
+    margin: 1.5em 0;
+    padding: .5em 1em;
+    height: 35px;
+    border: 0;
+    border-radius: 7px;
+    background-color: #181c2e;
+    color: #fff;
+    font-size: 1.1em;
+`
 
 export const Table = styled.table`
     border: 1px solid #ccc;
